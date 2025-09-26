@@ -1,4 +1,6 @@
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is the provided NumberTriangle class to be used in this coding task.
@@ -62,8 +64,10 @@ public class NumberTriangle {
      *
      * Note: a NumberTriangle contains at least one value.
      */
-    public void maxSumPath() {
+    public void maxSumPath(NumberTriangle num_triangle) {
         // for fun [not for credit]:
+        num_triangle.setLeft(left = null);
+        num_triangle.setRight(right = null);
     }
 
 
@@ -110,24 +114,41 @@ public class NumberTriangle {
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
 
 
-        // TODO define any variables that you want to use to store things
-
+        List<List<NumberTriangle>> rows = new ArrayList<>();
         // will need to return the top of the NumberTriangle,
         // so might want a variable for that.
         NumberTriangle top = null;
 
         String line = br.readLine();
         while (line != null) {
-
-            // remove when done; this line is included so running starter code prints the contents of the file
-            System.out.println(line);
-
-            // TODO process the line
-
-            //read the next line
+            String[] tokens = line.trim().split("\\s+");
+            // line.trim() removes all the space in front of the argument
+            //.split("\\s+") split the numbers whenever one or more space appears between them
+            List<NumberTriangle> row = new ArrayList<>();
+            for (String token : tokens) {
+                int val = Integer.parseInt(token); // converts string to integer value
+                NumberTriangle node = new NumberTriangle(val);
+                row.add(node);
+            }
+            rows.add(row);
             line = br.readLine();
         }
         br.close();
+        // Link nodes to form the triangle structure by setting left and right children
+        for (int r = rows.size() - 2; r >= 0; r--) {
+            List<NumberTriangle> currentRow = rows.get(r);
+            List<NumberTriangle> nextRow = rows.get(r + 1);
+
+            for (int i = 0; i < currentRow.size(); i++) {
+                currentRow.get(i).setLeft(nextRow.get(i));
+                currentRow.get(i).setRight(nextRow.get(i + 1));
+            }
+        }
+        // The top node is the first node in the first row
+        if (!rows.isEmpty()) {
+            top = rows.get(0).get(0);
+        }
+
         return top;
     }
 
